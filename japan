@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JAPANESE CINEMA ADVENT CALENDAR</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f5f5f5;
+  color: #222;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+h1 {
+  font-size: 3.2em;
+  margin-bottom: 0.2em;
+  color: #b22222;
+  font-family: 'Noto Serif JP', serif;
+}
+h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8em;
+  font-weight: 400;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #444;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.square {
+  background: #ddd;
+  border: 2px solid #bbb;
+  border-radius: 10px;
+  aspect-ratio: 1/1;
+  min-height: 200px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s;
+  overflow: hidden;
+}
+.square:hover { transform: scale(1.05); }
+.square span {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3em;
+  color: #b22222;
+  font-family: 'Noto Serif JP', serif;
+}
+
+.revealed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+.revealed img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: #fff;
+  color: #222;
+  padding: 30px;
+  border-radius: 15px;
+  height: 900px;
+  width: 1125px;
+  text-align: left;
+  font-size: 1.2rem;
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+}
+.close {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #b22222;
+}
+
+/* Modal Body */
+.modal-body {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  height: 100%;
+  width: 100%;
+  align-items: flex-start;
+}
+.poster img {
+  max-height: 825px;
+  width: auto;
+  border-radius: 12px;
+  object-fit: contain;
+}
+.film-info {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+#modalTitle {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 2.2rem;
+  margin: 0;
+}
+#modalYear {
+  display: block;
+  font-size: 1.4rem;
+  opacity: 0.7;
+  margin-top: 3px;
+}
+.stats {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.stats span { display: flex; align-items: center; gap: 5px; }
+.stats img.icon { width: 30px; height: 30px; }
+.tags { margin-top: 15px; font-style: italic; font-size: 1rem; }
+.streaming-logo img { width: 100px; height: auto; margin-top: 10px; }
+
+/* Reset */
+.squareResetBtn {
+  position: absolute;
+  top: 5px; right: 5px;
+  font-size: 0.8em;
+  padding: 2px 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #b22222;
+  color: #fff;
+}
+#resetBtn {
+  margin-top: 20px;
+  font-size: 1em;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+  background-color: #b22222;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+}
+</style>
+</head>
+<body>
+
+<h1>JAPANESE CINEMA ADVENT CALENDAR</h1>
+<h2>Discover 15 classics and hidden gems</h2>
+<div class="grid" id="calendar"></div>
+
+<!-- Modal -->
+<div class="modal" id="filmModal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <div class="modal-body">
+      <div class="poster">
+        <img id="modalPoster" src="" alt="Film Poster">
+      </div>
+      <div class="film-info">
+        <h3 id="modalTitle">Film Title</h3>
+        <span id="modalYear">(Year)</span>
+        <p class="stats">
+          <span id="runtime"></span>
+          <span id="rtScore"><img class="icon" src="images/rotten_icon.png"> RT%</span>
+          <span id="lbScore"><img class="icon" src="images/letterboxd_icon.png"> LB%</span>
+        </p>
+        <p id="modalDesc">Description goes here</p>
+        <p class="tags"></p>
+        <div id="modalStreaming" class="streaming-logo"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button id="resetBtn">RESET CALENDAR</button>
+
+<script>
+const calendar = document.getElementById('calendar');
+let openedSquares = JSON.parse(localStorage.getItem('openedSquaresJP')) || {};
+
+const films = [
+  // Add your 15 Japanese cinema films here (images, posters, etc.)
+];
+
+function createSquare(film, i){
+  const square = document.createElement('div');
+  square.classList.add('square');
+  square.dataset.index = i;
+  square.innerHTML = `<span>${i+1}</span>`;
+  if(openedSquares[i]) revealSquare(square, film);
+  square.addEventListener('click', ()=>{
+    if(!square.classList.contains('revealed')){
+      revealSquare(square, film);
+      openedSquares[i] = true;
+      localStorage.setItem('openedSquaresJP', JSON.stringify(openedSquares));
+    }
+  });
+  return square;
+}
+function revealSquare(square, film){
+  square.classList.add('revealed');
+  square.innerHTML = `<img src="${film.image}" alt="${film.title}"><button class="squareResetBtn">×</button>`;
+  const img = square.querySelector('img');
+  img.addEventListener('click', e=>{
+    e.stopPropagation();
+    openModal(film);
+  });
+  square.querySelector('.squareResetBtn').addEventListener('click', e=>{
+    e.stopPropagation();
+    square.classList.remove('revealed');
+    square.innerHTML = `<span>${parseInt(square.dataset.index)+1}</span>`;
+    delete openedSquares[square.dataset.index];
+    localStorage.setItem('openedSquaresJP', JSON.stringify(openedSquares));
+  });
+}
+films.forEach((film,i)=>calendar.appendChild(createSquare(film,i)));
+
+const modal = document.getElementById('filmModal');
+const closeModal = document.getElementById('closeModal');
+const modalPoster = document.getElementById('modalPoster');
+const modalTitle = document.getElementById('modalTitle');
+const modalYear = document.getElementById('modalYear');
+const modalDesc = document.getElementById('modalDesc');
+const runtimeSpan = document.getElementById('runtime');
+const rtSpan = document.getElementById('rtScore');
+const lbSpan = document.getElementById('lbScore');
+const tagsP = document.querySelector('.tags');
+
+function openModal(film){
+  modalPoster.src = film.poster;
+  modalTitle.textContent = film.title;
+  modalYear.textContent = film.year ? `(${film.year})` : '';
+  modalDesc.textContent = film.description;
+  runtimeSpan.textContent = film.runtime;
+  rtSpan.innerHTML = `<img class="icon" src="images/rotten_icon.png"> ${film.rottenScore}`;
+  lbSpan.innerHTML = `<img class="icon" src="images/letterboxd_icon.png"> ${film.letterboxdScore}`;
+  tagsP.textContent = film.tags.join(" / ");
+  const streamingDiv = document.getElementById('modalStreaming');
+  streamingDiv.innerHTML = film.streaming ? `<img src="${film.streaming}" alt="Streaming">` : "";
+  modal.style.display = "flex";
+}
+closeModal.onclick = () => { modal.style.display = 'none'; };
+window.onclick = (e) => { if(e.target === modal) modal.style.display = 'none'; };
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  localStorage.removeItem('openedSquaresJP');
+  location.reload();
+});
+</script>
+</body>
+</html>
