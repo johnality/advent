@@ -267,14 +267,14 @@ const lbSpan = document.getElementById('lbScore');
 const tagsP = document.querySelector('.tags');
 
 function openModal(film){
-  modalPoster.src = film.poster;
-  modalTitle.textContent = film.title;
+  modalPoster.src = film.poster || ""; // fallback if missing
+  modalTitle.textContent = film.title || "Untitled";
   modalYear.textContent = film.year ? `(${film.year})` : '';
-  modalDesc.textContent = film.description;
-  runtimeSpan.textContent = film.runtime;
-  rtSpan.innerHTML = `<img class="icon" src="images/rotten_icon.png"> ${film.rottenScore}`;
-  lbSpan.innerHTML = `<img class="icon" src="images/letterboxd_icon.png"> ${film.letterboxdScore}`;
-  tagsP.textContent = film.tags.join(" / ");
+  modalDesc.textContent = film.description || "";
+  runtimeSpan.textContent = film.runtime || "";
+  rtSpan.innerHTML = `<img class="icon" src="images/rotten_icon.png"> ${film.rottenScore || ""}`;
+  lbSpan.innerHTML = `<img class="icon" src="images/letterboxd_icon.png"> ${film.letterboxdScore || ""}`;
+  tagsP.textContent = Array.isArray(film.tags) ? film.tags.join(" / ") : "";
   const streamingDiv = document.getElementById('modalStreaming');
   streamingDiv.innerHTML = film.streaming ? `<img src="${film.streaming}" alt="Streaming">` : "";
   modal.style.display = "flex";
