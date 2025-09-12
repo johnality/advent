@@ -90,8 +90,10 @@ h2 {
   color: #222;
   padding: 30px;
   border-radius: 15px;
-  height: 900px;
-  width: 1125px;
+  /* height: 900px; REMOVE */
+  /* width: 1125px; REMOVE */
+  max-width: 90vw;  /* keeps it responsive */
+  max-height: 90vh; /* keeps it from going off-screen */
   text-align: left;
   font-size: 1.2rem;
   font-family: 'Montserrat', sans-serif;
@@ -119,7 +121,7 @@ h2 {
   align-items: flex-start;
 }
 .poster img {
-  max-height: 400px; /* reduced to ~50% */
+  max-height: 80vh; /* scales to viewport height */
   width: auto;
   border-radius: 12px;
   object-fit: contain;
