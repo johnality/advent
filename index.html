@@ -15,11 +15,11 @@ body {
   color: #222;
   text-align: center;
   margin: 0;
-  padding: 20px;
+  padding: 10px; /* smaller padding to reduce space */
 }
 h1 {
   font-size: 3.2em;
-  margin-bottom: 0.2em;
+  margin: 20px 0 0.2em 0; /* small top margin only */
   color: #b22222;
   font-family: 'Cardo', serif;
 }
@@ -119,7 +119,7 @@ h2 {
   align-items: flex-start;
 }
 .poster img {
-  max-height: 825px;
+  max-height: 400px; /* reduced to ~50% */
   width: auto;
   border-radius: 12px;
   object-fit: contain;
@@ -150,7 +150,6 @@ h2 {
 }
 .stats span { display: flex; align-items: center; gap: 5px; }
 .stats img.icon { width: 30px; height: 30px; }
-.tags { margin-top: 15px; font-style: italic; font-size: 1rem; }
 .streaming-logo img { width: 100px; height: auto; margin-top: 10px; }
 
 /* Reset */
@@ -201,7 +200,6 @@ h2 {
           <span id="lbScore"><img class="icon" src="images/letterboxd_icon.png"> LB%</span>
         </p>
         <p id="modalDesc">Description goes here</p>
-        <p class="tags"></p>
         <div id="modalStreaming" class="streaming-logo"></div>
       </div>
     </div>
@@ -214,24 +212,14 @@ h2 {
 const calendar = document.getElementById('calendar');
 let openedSquares = JSON.parse(localStorage.getItem('openedSquaresJP')) || {};
 
+// films array unchanged
 const films = [
-  // Add your 15 Japanese cinema films here (images, posters, etc.)
+  // your films here...
 
-{ title: "Evil Does Not Exist", year: 2023, image: "images/evil2.jpg", poster: "images/evil_poster.jpg", runtime: "106 min", rottenScore: "91%", letterboxdScore: "3.8", description: "Plans to build a modern camping site disrupt the lives of village inhabitants - Ryūsuke Hamaguchi offers an entrancing perspective on the battle between modern civilization and nature", streaming: "images/criterion_logo.png" },
-{ title: "High and Low", year: 1963, image: "images/high.jpg", poster: "images/high_poster.jpg", runtime: "142 min", rottenScore: "97%", letterboxdScore: "4.6", description: "An executive is hit with a huge ransom demand when his chauffeur’s son is kidnapped - Akira Kurosawa’s meticulously crafted, enthralling procedural is imbued with weighty moral heft", streaming: "images/criterion_logo.png" },
-{ title: "Spirited Away", year: 2001, image: "images/spirit.jpg", poster: "images/spirit_poster.jpg", runtime: "125 min", rottenScore: "96%", letterboxdScore: "4.4", description: "A young girl becomes trapped in a strange new world of spirits - Hayao Miyazaki’s dazzling fairy tale will leave viewers fascinated by the world around them", streaming: "images/hbo_logo3.png" },
-{ title: "Princess Mononoke", year: 1997, image: "images/mononoke.jpg", poster: "images/mononoke_poster.jpg", runtime: "134 min", rottenScore: "93%", letterboxdScore: "4.4", description: "A cursed prince attempts to bring balance to a conflict between women fighting to protect the forest from being destroyed - Hayao Miyazaki’s epic animated landmark has breathtaking visuals", streaming: "images/hbo_logo3.png" },
-{ title: "Ugetsu", year: 1953, image: "images/ugetsu.jpg", poster: "images/ugetsu_poster.jpg", runtime: "96 min", rottenScore: "100%", letterboxdScore: "4.3", description: "16th century peasants pursue riches, honor and a mysterious lady during wartime - Kenji Mizoguchi’s towering classic of world cinema is thought-provoking and richly atmospheric", streaming: "images/criterion_logo.png" },
-{ title: "Rashomon", year: 1950, image: "images/rash.jpg", poster: "images/rash_poster.jpg", runtime: "88 min", rottenScore: "98%", letterboxdScore: "4.2", description: "Four people recount different versions of the same crime - Akira Kurosawa’s innovative structure and thoughtful exploration of reality versus perception", streaming: "images/hbo_logo3.png" },
-{ title: "First Love", year: 2019, image: "images/first.jpg", poster: "images/first_poster.jpg", runtime: "108 min", rottenScore: "98%", letterboxdScore: "3.6", description: "Young lovers get caught up in a scheme involving corrupt cops, gangsters and assassins - Takashi Miike blends violence, comedy and romance in a wildly entertaining ride ", streaming: "images/prime.png" },
-{ title: "The Tale of The Princess Kaguya", year: 2013, image: "images/kag.jpg", poster: "images/kag_poster.jpg", runtime: "137 min", rottenScore: "100%", letterboxdScore: "4.3", description: "Found inside a bamboo stalk, a mysterious young princess enthrals all who encounter her - Isao Takahata’s modern animated treasure boasts narrative depth and exquisite visual beauty", streaming: "images/hbo_logo3.png" },
-{ title: "Ghost in the Shell", year: 1995, image: "images/ghost.jpg", poster: "images/ghost_poster.jpg", runtime: "83 min", rottenScore: "95%", letterboxdScore: "4.1", description: "In the near future, cybernetically enhanced cops investigate a criminal who hacks into people’s brains - Mamoru Oshii’s thoughtful, complex and stunning feat of animation", streaming: "images/criterion_logo.png" },
-{ title: "Millennium Actress", year: 2001, image: "images/mil.jpg", poster: "images/mil_poster.jpg", runtime: "87 min", rottenScore: "93%", letterboxdScore: "4.2", description: "The story of an aging actress' personal life unfolds - Satoshi Kon’s sophisticated animation deftly blurs memory and make-believe ", streaming: "images/criterion_logo.png" },
-{ title: "Still Walking", year: 2008, image: "images/still.jpg", poster: "images/still_poster.jpg", runtime: "114 min", rottenScore: "100%", letterboxdScore: "4.3", description: "A family gathers for a mysterious ritual - Hirokazu Kore-eda’s drama casts a delicate, entrancing spell ", streaming: "images/criterion_logo.png" },
-{ title: "Plan 75", year: 2022, image: "images/75.jpg", poster: "images/75_poster.jpg", runtime: "113 min", rottenScore: "95%", letterboxdScore: "3.5", description: "In the near future, an elderly woman runs away to avoid government-sanctioned euthaniza - Chie Hayakawa’s sensitive and insightful sci-fi explores our relationship with life and death", streaming: "images/criterion_logo.png" },
+  { title: "Evil Does Not Exist", year: 2023, image: "images/evil2.jpg", poster: "images/evil_poster.jpg", runtime: "106 min", rottenScore: "91%", letterboxdScore: "3.8", description: "Plans to build a modern camping site disrupt the lives of village inhabitants - Ryūsuke Hamaguchi offers an entrancing perspective on the battle between modern civilization and nature", streaming: "images/criterion_logo.png" }, { title: "High and Low", year: 1963, image: "images/high.jpg", poster: "images/high_poster.jpg", runtime: "142 min", rottenScore: "97%", letterboxdScore: "4.6", description: "An executive is hit with a huge ransom demand when his chauffeur’s son is kidnapped - Akira Kurosawa’s meticulously crafted, enthralling procedural is imbued with weighty moral heft", streaming: "images/criterion_logo.png" }, { title: "Spirited Away", year: 2001, image: "images/spirit.jpg", poster: "images/spirit_poster.jpg", runtime: "125 min", rottenScore: "96%", letterboxdScore: "4.4", description: "A young girl becomes trapped in a strange new world of spirits - Hayao Miyazaki’s dazzling fairy tale will leave viewers fascinated by the world around them", streaming: "images/hbo_logo3.png" }, { title: "Princess Mononoke", year: 1997, image: "images/mononoke.jpg", poster: "images/mononoke_poster.jpg", runtime: "134 min", rottenScore: "93%", letterboxdScore: "4.4", description: "A cursed prince attempts to bring balance to a conflict between women fighting to protect the forest from being destroyed - Hayao Miyazaki’s epic animated landmark has breathtaking visuals", streaming: "images/hbo_logo3.png" }, { title: "Ugetsu", year: 1953, image: "images/ugetsu.jpg", poster: "images/ugetsu_poster.jpg", runtime: "96 min", rottenScore: "100%", letterboxdScore: "4.3", description: "16th century peasants pursue riches, honor and a mysterious lady during wartime - Kenji Mizoguchi’s towering classic of world cinema is thought-provoking and richly atmospheric", streaming: "images/criterion_logo.png" }, { title: "Rashomon", year: 1950, image: "images/rash.jpg", poster: "images/rash_poster.jpg", runtime: "88 min", rottenScore: "98%", letterboxdScore: "4.2", description: "Four people recount different versions of the same crime - Akira Kurosawa’s innovative structure and thoughtful exploration of reality versus perception", streaming: "images/hbo_logo3.png" }, { title: "First Love", year: 2019, image: "images/first.jpg", poster: "images/first_poster.jpg", runtime: "108 min", rottenScore: "98%", letterboxdScore: "3.6", description: "Young lovers get caught up in a scheme involving corrupt cops, gangsters and assassins - Takashi Miike blends violence, comedy and romance in a wildly entertaining ride ", streaming: "images/prime.png" }, { title: "The Tale of The Princess Kaguya", year: 2013, image: "images/kag2.jpg", poster: "images/kag_poster.jpg", runtime: "137 min", rottenScore: "100%", letterboxdScore: "4.3", description: "Found inside a bamboo stalk, a mysterious young princess enthrals all who encounter her - Isao Takahata’s modern animated treasure boasts narrative depth and exquisite visual beauty", streaming: "images/hbo_logo3.png" }, { title: "Ghost in the Shell", year: 1995, image: "images/ghost2.jpg", poster: "images/ghost_poster.jpg", runtime: "83 min", rottenScore: "95%", letterboxdScore: "4.1", description: "In the near future, cybernetically enhanced cops investigate a criminal who hacks into people’s brains - Mamoru Oshii’s thoughtful, complex and stunning feat of animation", streaming: "images/criterion_logo.png" }, { title: "Millennium Actress", year: 2001, image: "images/mil.jpg", poster: "images/mil_poster.jpg", runtime: "87 min", rottenScore: "93%", letterboxdScore: "4.2", description: "The story of an aging actress' personal life unfolds - Satoshi Kon’s sophisticated animation deftly blurs memory and make-believe ", streaming: "images/criterion_logo.png" }, { title: "Still Walking", year: 2008, image: "images/still.jpg", poster: "images/still_poster.jpg", runtime: "114 min", rottenScore: "100%", letterboxdScore: "4.3", description: "A family gathers for a mysterious ritual - Hirokazu Kore-eda’s drama casts a delicate, entrancing spell ", streaming: "images/criterion_logo.png" }, { title: "Plan 75", year: 2022, image: "images/75.jpg", poster: "images/75_poster.jpg", runtime: "113 min", rottenScore: "95%", letterboxdScore: "3.5", description: "In the near future, an elderly woman runs away to avoid government-sanctioned euthaniza - Chie Hayakawa’s sensitive and insightful sci-fi explores our relationship with life and death", streaming: "images/criterion_logo.png" },
 
-  
-];
+  ];
+
 
 function createSquare(film, i){
   const square = document.createElement('div');
@@ -275,17 +263,15 @@ const modalDesc = document.getElementById('modalDesc');
 const runtimeSpan = document.getElementById('runtime');
 const rtSpan = document.getElementById('rtScore');
 const lbSpan = document.getElementById('lbScore');
-const tagsP = document.querySelector('.tags');
 
 function openModal(film){
-  modalPoster.src = film.poster || ""; // fallback if missing
+  modalPoster.src = film.poster || ""; 
   modalTitle.textContent = film.title || "Untitled";
   modalYear.textContent = film.year ? `(${film.year})` : '';
   modalDesc.textContent = film.description || "";
   runtimeSpan.textContent = film.runtime || "";
   rtSpan.innerHTML = `<img class="icon" src="images/rotten_icon.png"> ${film.rottenScore || ""}`;
   lbSpan.innerHTML = `<img class="icon" src="images/letterboxd_icon.png"> ${film.letterboxdScore || ""}`;
-  tagsP.textContent = Array.isArray(film.tags) ? film.tags.join(" / ") : "";
   const streamingDiv = document.getElementById('modalStreaming');
   streamingDiv.innerHTML = film.streaming ? `<img src="${film.streaming}" alt="Streaming">` : "";
   modal.style.display = "flex";
