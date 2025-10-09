@@ -1,191 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Uncle John's Movie Advent Calendar Extravaganza</title>
+<meta charset="UTF-8">
+<title>Japanese Cinema Advent Calendar</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cardo&family=Noto+Serif+JP:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      background-color: #f2f8ff;
-      font-family: 'Oswald', sans-serif;
-      text-align: center;
-      padding: 40px;
-      color: #222;
-    }
+<style>
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f5f5f5;
+  color: #222;
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+}
+h1 {
+  font-size: 3.2em;
+  margin: 20px 0 0.2em 0;
+  color: #b22222;
+  font-family: 'Cardo', serif;
+}
+h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8em;
+  font-weight: 400;
+  margin-top: 0;
+  margin-bottom: 40px; /* more space below headings */
+  color: #444;
+}
 
-    h1 {
-      font-family: 'Impact', sans-serif;
-      font-size: 3em;
-      color: #005b96;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-      margin-bottom: 40px;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto 40px auto; /* added space below grid */
+}
 
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      justify-content: center;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+.square {
+  background: #ddd;
+  border: 2px solid #bbb;
+  border-radius: 50%;
+  aspect-ratio: 1/1;
+  min-height: 200px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s;
+  overflow: hidden;
+}
+.square:hover { transform: scale(1.05); }
+.square span {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3em;
+  color: #b22222;
+  font-family: 'Noto Serif JP', serif;
+}
 
-    .box {
-      background-color: #e0f0ff;
-      border-radius: 16px;
-      padding: 40px;
-      font-family: 'Impact', sans-serif;
-      font-size: 2em;
-      color: #004c91;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-    }
+.revealed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+.revealed img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
 
-    .box:hover {
-      background-color: #b3e0ff;
-      transform: translateY(-3px);
-    }
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: #fff;
+  color: #222;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  text-align: left;
+  font-size: 1.2rem;
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+}
 
-    .popup {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+.close {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #b22222;
+}
 
-    .popup-content {
-      background-color: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      max-width: 600px;
-      text-align: center;
-      position: relative;
-    }
+/* Modal Body */
+.modal-body {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  height: 100%;
+  width: 100%;
+  align-items: flex-start;
+}
+.poster img {
+  max-height: 400px;
+  width: auto;
+  border-radius: 12px;
+  object-fit: contain;
+}
+.film-info {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+#modalTitle {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 2.2rem;
+  margin: 0;
+}
+#modalYear {
+  display: block;
+  font-size: 1.4rem;
+  opacity: 0.7;
+  margin-top: 3px;
+}
+.stats {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.stats span { display: flex; align-items: center; gap: 5px; }
+.stats img.icon { width: 30px; height: 30px; }
+.streaming-logo img { width: 100px; height: auto; margin-top: 10px; }
 
-    .popup-content img.poster {
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .popup-content h2 {
-      font-family: 'Oswald', sans-serif;
-      font-size: 1.5em;
-      margin-bottom: 8px;
-    }
-
-    .popup-content p {
-      font-family: 'Oswald', sans-serif;
-      font-size: 1em;
-      color: #333;
-    }
-
-    .close {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      font-size: 1.5em;
-      color: #333;
-      cursor: pointer;
-    }
-
-    .reset-btn {
-      margin-top: 40px;
-      background-color: #005b96;
-      color: white;
-      font-family: 'Impact', sans-serif;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 1.2em;
-    }
-
-    .reset-btn:hover {
-      background-color: #0074cc;
-    }
-  </style>
+/* Reset */
+.squareResetBtn {
+  position: absolute;
+  top: 5px; right: 5px;
+  font-size: 0.8em;
+  padding: 2px 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #b22222;
+  color: #fff;
+}
+#resetBtn {
+  margin-top: 20px;
+  margin-bottom: 40px; /* extra space from grid */
+  font-size: 1em;
+  padding: 15px;
+  cursor: pointer;
+  border-radius: 50%; /* make circular */
+  border: none;
+  background-color: #b22222;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  width: 80px;
+  height: 80px;
+  line-height: 1;
+}
+</style>
 </head>
-
 <body>
 
-  <h1>Uncle John's Movie Advent Calendar Extravaganza</h1>
+<h1>Japanese Cinema Advent Calendar</h1>
+<h2>シネマアドベントカレンダー</h2>
+<div class="grid" id="calendar"></div>
 
-  <div class="calendar" id="calendar"></div>
-
-  <button class="reset-btn" onclick="resetCalendar()">RESET</button>
-
-  <div class="popup" id="popup">
-    <div class="popup-content" id="popupContent">
-      <span class="close" onclick="closePopup()">&times;</span>
-      <img id="poster" class="poster" src="" alt="Poster">
-      <h2 id="title"></h2>
-      <p id="description"></p>
-      <p><span id="year"></span> • <span id="runtime"></span></p>
-      <p>Rotten Tomatoes: <span id="rotten"></span> | Letterboxd: <span id="lb"></span></p>
-      <img id="streaming" src="" alt="Streaming" style="width:100px;margin-top:10px;">
+<!-- Modal -->
+<div class="modal" id="filmModal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <div class="modal-body">
+      <div class="poster">
+        <img id="modalPoster" src="" alt="Film Poster">
+      </div>
+      <div class="film-info">
+        <h3 id="modalTitle">Film Title</h3>
+        <span id="modalYear">(Year)</span>
+        <p class="stats">
+          <span id="runtime"></span>
+          <span id="rtScore"><img class="icon" src="images/rotten_icon.png"> RT%</span>
+          <span id="lbScore"><img class="icon" src="images/letterboxd_icon.png"> LB%</span>
+        </p>
+        <p id="modalDesc">Description goes here</p>
+        <div id="modalStreaming" class="streaming-logo"></div>
+      </div>
     </div>
   </div>
+</div>
 
-  <script>
-    const films = [
-      { title: "Spirited Away", year: 2001, image: "images/spirit.jpg", poster: "images/spirit_poster.jpg", runtime: "125 min", rottenScore: "96%", letterboxdScore: "4.4", description: "A young girl becomes trapped in the strange world of spirits - Hayao Miyazaki’s dazzling fairytale will leave viewers fascinated by the world around them", streaming: "images/hbo_logo3.png" }, 
-      { title: "Ghost in the Shell", year: 1995, image: "images/ghost2.jpg", poster: "images/ghost_poster.jpg", runtime: "83 min", rottenScore: "95%", letterboxdScore: "4.1", description: "In the future, cybernetically enhanced cops investigate a criminal who can hack people’s brains - Mamoru Oshii’s stunning feat of animation is both thoughtful and complex", streaming: "images/criterion_logo.png" }, 
-      { title: "Princess Mononoke", year: 1997, image: "images/mononoke.jpg", poster: "images/mononoke_poster.jpg", runtime: "134 min", rottenScore: "93%", letterboxdScore: "4.4", description: "A cursed prince attempts to bring peace to a conflict that could destroy a sacred forest - Hayao Miyazaki’s epic animation is visualy breathtaking", streaming: "images/hbo_logo3.png" }, 
-      { title: "The Tale of The Princess Kaguya", year: 2013, image: "images/kag2.jpg", poster: "images/kag_poster.jpg", runtime: "137 min", rottenScore: "100%", letterboxdScore: "4.3", description: "Found in a bamboo stalk, a mysterious princess enthrals everyone who encounters her - Isao Takahata’s animated treasure boasts depth and exquisite beauty", streaming: "images/hbo_logo3.png" }, 
-      { title: "Still Walking", year: 2008, image: "images/still.jpg", poster: "images/still_poster.jpg", runtime: "114 min", rottenScore: "100%", letterboxdScore: "4.3", description: "A family gathers for a mysterious ceremonial ritual - Hirokazu Kore-eda’s drama casts a delicate, captivating spell", streaming: "images/criterion_logo.png" }, 
-      { title: "First Love", year: 2019, image: "images/first.jpg", poster: "images/first_poster.jpg", runtime: "108 min", rottenScore: "98%", letterboxdScore: "3.6", description: "Young lovers get caught in a drug scheme that involves gangsters, assassins and corrupt cops - Takashi Miike blends violence, comedy and romance in a wildly entertaining ride", streaming: "images/prime.png" }, 
-      { title: "Cloud", year: 2024, image: "images/cloud.jpg", poster: "images/cloud_poster.jpg", runtime: "124 min", rottenScore: "93%", letterboxdScore: "3.5", description: "A young factory worker hustles into the sinister world of black market reselling. Kiyoshi Kurosawa’s stylish thriller delivers simmering tension and a searing portrait of greed.", streaming: "images/criterion_logo.png" },   
-      { title: "Ugetsu", year: 1953, image: "images/ugetsu.jpg", poster: "images/ugetsu_poster.jpg", runtime: "96 min", rottenScore: "100%", letterboxdScore: "4.3", description: "16th century peasants pursue riches, honor and a mysterious lady during wartime - Kenji Mizoguchi’s towering classic of world cinema is thought-provoking and richly atmospheric", streaming: "images/criterion_logo.png" }, 
-      { title: "Rashomon", year: 1950, image: "images/rash.jpg", poster: "images/rash_poster.jpg", runtime: "88 min", rottenScore: "98%", letterboxdScore: "4.2", description: "Four people recount different versions of how a samurai was killed - Akira Kurosawa’s innovative exploration of reality versus perception", streaming: "images/hbo_logo3.png" }, 
-      { title: "Millennium Actress", year: 2001, image: "images/mil.jpg", poster: "images/mil_poster.jpg", runtime: "87 min", rottenScore: "93%", letterboxdScore: "4.2", description: "The story of an aging actress' personal life unfolds - Satoshi Kon’s sophisticated animation blurs memory and make-believe", streaming: "images/criterion_logo.png" }, 
-      { title: "Plan 75", year: 2022, image: "images/75.jpg", poster: "images/75_poster.jpg", runtime: "113 min", rottenScore: "95%", letterboxdScore: "3.5", description: "In the near future, an elderly woman tries to avoid government-sanctioned euthaniza - Chie Hayakawa’s sensitive, insightful sci-fi explores our relationship with life and death", streaming: "images/criterion_logo.png" },
-      { title: "Evil Does Not Exist", year: 2023, image: "images/evil2.jpg", poster: "images/evil_poster.jpg", runtime: "106 min", rottenScore: "91%", letterboxdScore: "3.8", description: "The lives of village inhabitants are disrupted by plans to build a modern campsite in the forest - Ryūsuke Hamaguchi offers an entrancing perspective on the battle between modern civilization and nature", streaming: "images/criterion_logo.png" }
-    ];
+<button id="resetBtn">RESET</button>
 
-    const kanjiNumbers = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
-    const calendar = document.getElementById("calendar");
+<script>
+const calendar = document.getElementById('calendar');
+let openedSquares = JSON.parse(localStorage.getItem('openedSquaresJP')) || {};
 
-    kanjiNumbers.forEach((num, index) => {
-      const box = document.createElement("div");
-      box.classList.add("box");
-      box.textContent = num;
-      box.addEventListener("click", () => showPopup(index));
-      calendar.appendChild(box);
-    });
+// Kanji numerals for 1–24 (extend if needed)
+const kanjiNumbers = [
+  '一','二','三','四','五','六','七','八','九','十',
+  '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+  '二十一','二十二','二十三','二十四'
+];
 
-    function showPopup(index) {
-      const film = films[index];
-      document.getElementById("poster").src = film.poster;
-      document.getElementById("title").textContent = `${film.title} (${film.year})`;
-      document.getElementById("description").textContent = film.description;
-      document.getElementById("year").textContent = film.year;
-      document.getElementById("runtime").textContent = film.runtime;
-      document.getElementById("rotten").textContent = film.rottenScore;
-      document.getElementById("lb").textContent = film.letterboxdScore;
-      document.getElementById("streaming").src = film.streaming;
-
-      document.getElementById("popup").style.display = "flex";
+function createSquare(film, i){
+  const square = document.createElement('div');
+  square.classList.add('square');
+  square.dataset.index = i;
+  square.innerHTML = `<span>${kanjiNumbers[i] || (i+1)}</span>`;
+  if(openedSquares[i]) revealSquare(square, film);
+  square.addEventListener('click', ()=>{
+    if(!square.classList.contains('revealed')){
+      revealSquare(square, film);
+      openedSquares[i] = true;
+      localStorage.setItem('openedSquaresJP', JSON.stringify(openedSquares));
     }
+  });
+  return square;
+}
 
-    function closePopup() {
-      document.getElementById("popup").style.display = "none";
-    }
+function revealSquare(square, film){
+  square.classList.add('revealed');
+  square.innerHTML = `<img src="${film.image}" alt="${film.title}"><button class="squareResetBtn">×</button>`;
+  const img = square.querySelector('img');
+  img.addEventListener('click', e=>{
+    e.stopPropagation();
+    openModal(film);
+  });
+  square.querySelector('.squareResetBtn').addEventListener('click', e=>{
+    e.stopPropagation();
+    square.classList.remove('revealed');
+    square.innerHTML = `<span>${kanjiNumbers[parseInt(square.dataset.index)] || (parseInt(square.dataset.index)+1)}</span>`;
+    delete openedSquares[square.dataset.index];
+    localStorage.setItem('openedSquaresJP', JSON.stringify(openedSquares));
+  });
+}
 
-    function resetCalendar() {
-      closePopup();
-    }
-  </script>
+  /* ✅ INSERT FILM DATA HERE */
+const films = [
+  { title: "Spirited Away", year: 2001, image: "images/spirit.jpg", poster: "images/spirit_poster.jpg", runtime: "125 min", rottenScore: "96%", letterboxdScore: "4.4", description: "A young girl gets trapped in a strange world of spirits - Hayao Miyazaki’s dazzling fairytale leaves viewers fascinated by the world around them", streaming: "images/hbo_logo3.png" }, 
+  { title: "Ghost in the Shell", year: 1995, image: "images/ghost2.jpg", poster: "images/ghost_poster.jpg", runtime: "83 min", rottenScore: "95%", letterboxdScore: "4.1", description: "In the future, cybernetically enhanced cops investigate a criminal who can hack into people’s brains - Mamoru Oshii’s stunning feat of animation is thoughtful and complex", streaming: "images/criterion_logo.png" },
+  { title: "Princess Mononoke", year: 1997, image: "images/mononoke.jpg", poster: "images/mononoke_poster.jpg", runtime: "134 min", rottenScore: "93%", letterboxdScore: "4.4", description: "A cursed prince attempts to bring peace to a conflict that threatens to destroy a sacred forest - Hayao Miyazaki’s epic animation has breathtaking visuals", streaming: "images/hbo_logo3.png" },
+  { title: "The Tale of The Princess Kaguya", year: 2013, image: "images/kag2.jpg", poster: "images/kag_poster.jpg", runtime: "137 min", rottenScore: "100%", letterboxdScore: "4.3", description: "Found inside a bamboo stalk, a mysterious princess enthrals all who encounter her - Isao Takahata’s animated treasure boasts narrative depth and exquisite beauty", streaming: "images/hbo_logo3.png" },
+  { title: "Still Walking", year: 2008, image: "images/still.jpg", poster: "images/still_poster.jpg", runtime: "114 min", rottenScore: "100%", letterboxdScore: "4.3", description: "A family gathers for a mysterious ceremonial ritual - Hirokazu Kore-eda’s drama casts a delicate, entrancing spell", streaming: "images/criterion_logo.png" },
+  { title: "First Love", year: 2019, image: "images/first.jpg", poster: "images/first_poster.jpg", runtime: "108 min", rottenScore: "98%", letterboxdScore: "3.6", description: "Young lovers get caught up in a drug scheme involving corrupt cops, gangsters and assassins - Takashi Miike blends violence, comedy and romance in a wildly entertaining ride", streaming: "images/prime.png" },
+  { title: "Cloud", year: 2024, image: "images/cloud.jpg", poster: "images/cloud_poster.jpg", runtime: "124 min", rottenScore: "93%", letterboxdScore: "3.5", description: "A young factory worker hustles into the sinister world of black market reselling. Kiyoshi Kurosawa’s stylish thriller delivers simmering tension and a searing portrait of greed.", streaming: "images/criterion_logo.png" },
+  { title: "Ugetsu", year: 1953, image: "images/ugetsu.jpg", poster: "images/ugetsu_poster.jpg", runtime: "96 min", rottenScore: "100%", letterboxdScore: "4.3", description: "16th century peasants pursue riches, honor and a mysterious lady during wartime - Kenji Mizoguchi’s towering classic of world cinema is thought-provoking and richly atmospheric", streaming: "images/criterion_logo.png" },
+  { title: "Rashomon", year: 1950, image: "images/rash.jpg", poster: "images/rash_poster.jpg", runtime: "88 min", rottenScore: "98%", letterboxdScore: "4.2", description: "Four people recount different versions of the same crime - Akira Kurosawa’s innovative and thoughtful exploration of reality versus perception", streaming: "images/hbo_logo3.png" },
+  { title: "Millennium Actress", year: 2001, image: "images/mil.jpg", poster: "images/mil_poster.jpg", runtime: "87 min", rottenScore: "93%", letterboxdScore: "4.2", description: "The story of an aging actress' personal life unfolds - Satoshi Kon’s sophisticated animation deftly blurs memory and make-believe", streaming: "images/criterion_logo.png" },
+  { title: "Plan 75", year: 2022, image: "images/75.jpg", poster: "images/75_poster.jpg", runtime: "113 min", rottenScore: "95%", letterboxdScore: "3.5", description: "In the near future, an elderly woman tries to avoid government-sanctioned euthaniza - Chie Hayakawa’s sensitive and insightful sci-fi explores our relationship with life and death", streaming: "images/criterion_logo.png" },
+  { title: "Evil Does Not Exist", year: 2023, image: "images/evil2.jpg", poster: "images/evil_poster.jpg", runtime: "106 min", rottenScore: "91%", letterboxdScore: "3.8", description: "The lives of village inhabitants are disrupted by plans to build a modern campsite in the forest - Ryūsuke Hamaguchi offers an entrancing perspective on the battle between modern civilization and nature", streaming: "images/criterion_logo.png" }
+];
+
+
+films.forEach((film,i)=>calendar.appendChild(createSquare(film,i)));
+
+const modal = document.getElementById('filmModal');
+const closeModal = document.getElementById('closeModal');
+const modalPoster = document.getElementById('modalPoster');
+const modalTitle = document.getElementById('modalTitle');
+const modalYear = document.getElementById('modalYear');
+const modalDesc = document.getElementById('modalDesc');
+const runtimeSpan = document.getElementById('runtime');
+const rtSpan = document.getElementById('rtScore');
+const lbSpan = document.getElementById('lbScore');
+
+function openModal(film){
+  modalPoster.src = film.poster || ""; 
+  modalTitle.textContent = film.title || "Untitled";
+  modalYear.textContent = film.year ? `(${film.year})` : '';
+  modalDesc.textContent = film.description || "";
+  runtimeSpan.textContent = film.runtime || "";
+  rtSpan.innerHTML = `<img class="icon" src="images/rotten_icon.png"> ${film.rottenScore || ""}`;
+  lbSpan.innerHTML = `<img class="icon" src="images/letterboxd_icon.png"> ${film.letterboxdScore || ""}`;
+  const streamingDiv = document.getElementById('modalStreaming');
+  streamingDiv.innerHTML = film.streaming ? `<img src="${film.streaming}" alt="Streaming">` : "";
+  modal.style.display = "flex";
+}
+
+closeModal.onclick = () => { modal.style.display = 'none'; };
+window.onclick = (e) => { if(e.target === modal) modal.style.display = 'none'; };
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  localStorage.removeItem('openedSquaresJP');
+  location.reload();
+});
+</script>
 </body>
 </html>
