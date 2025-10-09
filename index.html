@@ -6,7 +6,6 @@
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Cardo&family=Noto+Serif+JP:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 body {
@@ -15,11 +14,11 @@ body {
   color: #222;
   text-align: center;
   margin: 0;
-  padding: 10px; /* smaller padding to reduce space */
+  padding: 10px;
 }
 h1 {
   font-size: 3.2em;
-  margin: 20px 0 0.2em 0; /* small top margin only */
+  margin: 20px 0 0.2em 0;
   color: #b22222;
   font-family: 'Cardo', serif;
 }
@@ -28,7 +27,7 @@ h2 {
   font-size: 1.8em;
   font-weight: 400;
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 40px; /* more space below headings */
   color: #444;
 }
 
@@ -37,13 +36,13 @@ h2 {
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0 auto 40px auto; /* added space below grid */
 }
 
 .square {
   background: #ddd;
   border: 2px solid #bbb;
-  border-radius: 50%; /* circle */
+  border-radius: 50%;
   aspect-ratio: 1/1;
   min-height: 200px;
   cursor: pointer;
@@ -90,8 +89,8 @@ h2 {
   color: #222;
   padding: 30px;
   border-radius: 15px;
-  max-width: 800px;   /* fixed maximum width */
-  width: 90%;         /* stays responsive on small screens */
+  max-width: 800px;
+  width: 90%;
   max-height: 90vh;
   text-align: left;
   font-size: 1.2rem;
@@ -103,7 +102,6 @@ h2 {
   position: relative;
 }
 
-  
 .close {
   position: absolute;
   top: 10px; right: 15px;
@@ -122,7 +120,7 @@ h2 {
   align-items: flex-start;
 }
 .poster img {
-  max-height: 400px; /* reduced to ~50% */
+  max-height: 400px;
   width: auto;
   border-radius: 12px;
   object-fit: contain;
@@ -169,14 +167,18 @@ h2 {
 }
 #resetBtn {
   margin-top: 20px;
+  margin-bottom: 40px; /* extra space from grid */
   font-size: 1em;
-  padding: 10px 20px;
+  padding: 15px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 50%; /* make circular */
   border: none;
   background-color: #b22222;
   color: #fff;
   font-family: 'Montserrat', sans-serif;
+  width: 80px;
+  height: 80px;
+  line-height: 1;
 }
 </style>
 </head>
@@ -209,12 +211,19 @@ h2 {
   </div>
 </div>
 
-<button id="resetBtn">RESET CALENDAR</button>
+<button id="resetBtn">RESET</button>
 
 <script>
 const calendar = document.getElementById('calendar');
 let openedSquares = JSON.parse(localStorage.getItem('openedSquaresJP')) || {};
 
+// Kanji numerals for 1–24 (extend if needed)
+const kanjiNumbers = [
+  '一','二','三','四','五','六','七','八','九','十',
+  '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+  '二十一','二十二','二十三','二十四'
+];
+  
 // films array unchanged
 const films = [
   // your films here...
@@ -234,12 +243,11 @@ const films = [
 
   ];
 
-
 function createSquare(film, i){
   const square = document.createElement('div');
   square.classList.add('square');
   square.dataset.index = i;
-  square.innerHTML = `<span>${i+1}</span>`;
+  square.innerHTML = `<span>${kanjiNumbers[i] || (i+1)}</span>`;
   if(openedSquares[i]) revealSquare(square, film);
   square.addEventListener('click', ()=>{
     if(!square.classList.contains('revealed')){
@@ -250,6 +258,7 @@ function createSquare(film, i){
   });
   return square;
 }
+
 function revealSquare(square, film){
   square.classList.add('revealed');
   square.innerHTML = `<img src="${film.image}" alt="${film.title}"><button class="squareResetBtn">×</button>`;
@@ -261,11 +270,12 @@ function revealSquare(square, film){
   square.querySelector('.squareResetBtn').addEventListener('click', e=>{
     e.stopPropagation();
     square.classList.remove('revealed');
-    square.innerHTML = `<span>${parseInt(square.dataset.index)+1}</span>`;
+    square.innerHTML = `<span>${kanjiNumbers[parseInt(square.dataset.index)] || (parseInt(square.dataset.index)+1)}</span>`;
     delete openedSquares[square.dataset.index];
     localStorage.setItem('openedSquaresJP', JSON.stringify(openedSquares));
   });
 }
+
 films.forEach((film,i)=>calendar.appendChild(createSquare(film,i)));
 
 const modal = document.getElementById('filmModal');
@@ -290,6 +300,7 @@ function openModal(film){
   streamingDiv.innerHTML = film.streaming ? `<img src="${film.streaming}" alt="Streaming">` : "";
   modal.style.display = "flex";
 }
+
 closeModal.onclick = () => { modal.style.display = 'none'; };
 window.onclick = (e) => { if(e.target === modal) modal.style.display = 'none'; };
 document.getElementById('resetBtn').addEventListener('click', ()=>{
